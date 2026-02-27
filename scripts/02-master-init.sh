@@ -52,7 +52,7 @@ REAL_USER="${SUDO_USER:-$USER}"
 REAL_HOME=$(eval echo "~$REAL_USER")
 
 mkdir -p "$REAL_HOME/.kube"
-cp -i /etc/kubernetes/admin.conf "$REAL_HOME/.kube/config"
+cp -f /etc/kubernetes/admin.conf "$REAL_HOME/.kube/config"
 chown "$REAL_USER:$REAL_USER" "$REAL_HOME/.kube/config"
 
 export KUBECONFIG="$REAL_HOME/.kube/config"
@@ -71,7 +71,11 @@ echo "Taint kaldirildi."
 echo "[4/6] Calico CNI kuruluyor..."
 sudo -u "$REAL_USER" kubectl apply -f "$REPO_DIR/infrastructure/calico/calico.yaml"
 
-echo "Calico pod'larinin hazir olmasi bekleniyor..."
+echo "Calico pod'larinin olusmasini bekleniyor..."
+until sudo -u "$REAL_USER" kubectl get pods -n kube-system -l k8s-app=calico-node 2>/dev/null | grep -q "calico"; do
+  sleep 2
+done
+echo "Calico pod'lari olustu, hazir olmasi bekleniyor..."
 sudo -u "$REAL_USER" kubectl wait --namespace kube-system \
   --for=condition=ready pod \
   --selector=k8s-app=calico-node \
@@ -85,8 +89,11 @@ echo "[5/6] MetalLB kuruluyor ($METALLB_VERSION)..."
 
 sudo -u "$REAL_USER" kubectl apply -f "https://raw.githubusercontent.com/metallb/metallb/$METALLB_VERSION/config/manifests/metallb-native.yaml"
 
-echo "MetalLB pod'larinin hazir olmasi bekleniyor..."
-sleep 10
+echo "MetalLB pod'larinin olusmasini bekleniyor..."
+until sudo -u "$REAL_USER" kubectl get pods -n metallb-system -l app=metallb 2>/dev/null | grep -q "metallb"; do
+  sleep 2
+done
+echo "MetalLB pod'lari olustu, hazir olmasi bekleniyor..."
 sudo -u "$REAL_USER" kubectl wait --namespace metallb-system \
   --for=condition=ready pod \
   --selector=app=metallb \
