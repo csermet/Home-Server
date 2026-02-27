@@ -4,10 +4,8 @@ metadata:
   name: letsencrypt-prod
 spec:
   acme:
-    # Let's Encrypt production endpoint
     server: https://acme-v02.api.letsencrypt.org/directory
-    # DEGISTIR: email adresini guncelle
-    email: your-email@example.com
+    email: {{ .Values.letsencryptEmail | quote }}
     privateKeySecretRef:
       name: letsencrypt-prod-account-key
     solvers:
@@ -26,9 +24,8 @@ metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    # Staging endpoint - test icin (rate limit yok)
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: your-email@example.com
+    email: {{ .Values.letsencryptEmail | quote }}
     privateKeySecretRef:
       name: letsencrypt-staging-account-key
     solvers:

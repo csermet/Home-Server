@@ -31,6 +31,10 @@ releases:
   - name: manifests
     namespace: devops
     chart: ./manifests
+    values:
+      - cloudflareApiToken: {{ requiredEnv "CLOUDFLARE_API_TOKEN" }}
+        gitlabRootPassword: {{ requiredEnv "GITLAB_ROOT_PASSWORD" }}
+        letsencryptEmail: {{ requiredEnv "LETSENCRYPT_EMAIL" }}
     needs:
       - kube-system/metrics-server
 
