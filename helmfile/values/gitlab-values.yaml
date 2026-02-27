@@ -37,73 +37,73 @@ gitlab:
   webservice:
     resources:
       requests:
-        cpu: 500m
-        memory: 2Gi
-      limits:
-        cpu: 2
-        memory: 4Gi
-    minReplicas: 1
-    maxReplicas: 2
-  sidekiq:
-    resources:
-      requests:
         cpu: 250m
         memory: 1Gi
       limits:
         cpu: 1
         memory: 2Gi
     minReplicas: 1
-    maxReplicas: 2
+    maxReplicas: 1
+  sidekiq:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    minReplicas: 1
+    maxReplicas: 1
   gitaly:
     resources:
       requests:
-        cpu: 250m
-        memory: 512Mi
+        cpu: 100m
+        memory: 256Mi
       limits:
-        cpu: 1
-        memory: 2Gi
+        cpu: 500m
+        memory: 512Mi
   gitlab-shell:
     resources:
       requests:
-        cpu: 50m
-        memory: 64Mi
+        cpu: 25m
+        memory: 32Mi
       limits:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 100m
+        memory: 128Mi
     minReplicas: 1
-    maxReplicas: 2
+    maxReplicas: 1
   toolbox:
     resources:
       requests:
-        cpu: 50m
-        memory: 128Mi
+        cpu: 25m
+        memory: 64Mi
       limits:
-        cpu: 250m
-        memory: 512Mi
+        cpu: 100m
+        memory: 256Mi
 
 postgresql:
   resources:
     requests:
-      cpu: 250m
-      memory: 512Mi
+      cpu: 100m
+      memory: 256Mi
     limits:
-      cpu: 1
-      memory: 1Gi
+      cpu: 500m
+      memory: 512Mi
 
 redis:
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 64Mi
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 200m
+      memory: 256Mi
 
 minio:
   resources:
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 50m
+      memory: 64Mi
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 200m
+      memory: 256Mi

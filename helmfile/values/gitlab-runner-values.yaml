@@ -17,10 +17,10 @@ runners:
         image = "ubuntu:22.04"
         privileged = false
 
-        cpu_request = "1000m"
-        cpu_limit = "2000m"
-        memory_request = "1Gi"
-        memory_limit = "4Gi"
+        cpu_request = "500m"
+        cpu_limit = "1000m"
+        memory_request = "512Mi"
+        memory_limit = "1Gi"
         helper_cpu_request = "100m"
         helper_cpu_limit = "200m"
         helper_memory_request = "128Mi"
@@ -31,7 +31,7 @@ runners:
 
 concurrent: 10
 
-replicas: 2
+replicas: 1
 
 checkInterval: 3
 

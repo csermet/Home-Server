@@ -11,8 +11,6 @@ repositories:
     url: https://helm.goharbor.io
   - name: argo
     url: https://argoproj.github.io/argo-helm
-  - name: sonarqube
-    url: https://SonarSource.github.io/helm-chart-sonarqube
   - name: metrics-server
     url: https://kubernetes-sigs.github.io/metrics-server/
   - name: jetstack
@@ -96,17 +94,7 @@ releases:
     needs:
       - devops/nginx-ingress
 
-  # 9. SonarQube - Kod kalitesi analizi
-  - name: sonarqube
-    namespace: devops
-    chart: sonarqube/sonarqube
-    version: 2025.5.0
-    values:
-      - values/sonarqube-values.yaml
-    needs:
-      - devops/nginx-ingress
-
-  # 10. Grafana - Metrik goruntuleme
+  # 9. Grafana - Metrik goruntuleme
   - name: grafana
     namespace: devops
     chart: grafana/grafana
