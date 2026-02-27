@@ -1,0 +1,100 @@
+expose:
+  type: ingress
+  tls:
+    enabled: true
+    certSource: secret
+    secret:
+      secretName: harbor-tls
+  ingress:
+    hosts:
+      core: harbor.home.railguncnr.com
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+
+externalURL: https://harbor.home.railguncnr.com
+
+# DEGISTIR: Harbor admin sifreni belirle
+harborAdminPassword: "HARBOR_ADMIN_PASSWORD_BURAYA"
+
+database:
+  type: internal
+  internal:
+    password: "changeit"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+redis:
+  type: internal
+  internal:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+persistence:
+  enabled: true
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false
+
+ipFamily:
+  ipv6:
+    enabled: false
+
+core:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+registry:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+portal:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+jobservice:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+trivy:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi

@@ -1,0 +1,39 @@
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hosts:
+    - name: sonarqube.home.railguncnr.com
+      path: /
+  tls:
+    - secretName: sonarqube-tls
+      hosts:
+        - sonarqube.home.railguncnr.com
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+# DEGISTIR: SonarQube admin sifreni belirle
+account:
+  adminPassword: "SONARQUBE_ADMIN_PASSWORD_BURAYA"
+  currentAdminPassword: "admin"
+
+jvmOpts: "-Xmx2048m -Xms1024m"
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 2Gi
+  limits:
+    cpu: 2
+    memory: 4Gi
+
+prometheusExporter:
+  enabled: true
+
+monitoringPasscode: "SonarpassMonpass123!*"
+
+edition: ""
+
+community:
+  enabled: true

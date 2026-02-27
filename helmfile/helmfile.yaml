@@ -1,0 +1,137 @@
+repositories:
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+  - name: prometheus-community
+    url: https://prometheus-community.github.io/helm-charts
+  - name: gitlab
+    url: https://charts.gitlab.io/
+  - name: harbor
+    url: https://helm.goharbor.io
+  - name: argo
+    url: https://argoproj.github.io/argo-helm
+  - name: sonarqube
+    url: https://SonarSource.github.io/helm-chart-sonarqube
+  - name: metrics-server
+    url: https://kubernetes-sigs.github.io/metrics-server/
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: external-dns
+    url: https://kubernetes-sigs.github.io/external-dns/
+
+releases:
+  # 1. Metrics Server - kubectl top ve HPA icin
+  - name: metrics-server
+    namespace: kube-system
+    chart: metrics-server/metrics-server
+    version: 3.12.2
+    values:
+      - values/metrics-server-values.yaml
+
+  # 2. Manifests - Secrets (Cloudflare API, GitLab sifreleri)
+  - name: manifests
+    namespace: devops
+    chart: ./manifests
+    needs:
+      - kube-system/metrics-server
+
+  # 3. cert-manager - Let's Encrypt TLS sertifikalari
+  - name: cert-manager
+    namespace: cert-manager
+    chart: jetstack/cert-manager
+    version: v1.17.1
+    values:
+      - values/cert-manager-values.yaml
+    needs:
+      - devops/manifests
+
+  # 4. external-dns - Cloudflare DNS otomatik yonetimi
+  - name: external-dns
+    namespace: devops
+    chart: external-dns/external-dns
+    version: 1.16.1
+    values:
+      - values/external-dns-values.yaml
+    needs:
+      - cert-manager/cert-manager
+
+  # 5. NGINX Ingress Controller - LoadBalancer (MetalLB)
+  - name: nginx-ingress
+    namespace: devops
+    chart: ingress-nginx/ingress-nginx
+    version: 4.13.3
+    values:
+      - values/nginx-values.yaml
+    needs:
+      - devops/external-dns
+
+  # 6. GitLab CE - Kaynak kod ve CI/CD
+  - name: gitlab
+    namespace: devops
+    chart: gitlab/gitlab
+    version: 9.4.3
+    values:
+      - values/gitlab-values.yaml
+    needs:
+      - devops/nginx-ingress
+
+  # 7. Prometheus - Metrik toplama
+  - name: prometheus
+    namespace: devops
+    chart: prometheus-community/prometheus
+    version: 27.42.0
+    values:
+      - values/prometheus-values.yaml
+    needs:
+      - devops/nginx-ingress
+
+  # 8. ArgoCD - GitOps deployment
+  - name: argocd
+    namespace: devops
+    chart: argo/argo-cd
+    version: 9.0.5
+    values:
+      - values/argocd-values.yaml
+    needs:
+      - devops/nginx-ingress
+
+  # 9. SonarQube - Kod kalitesi analizi
+  - name: sonarqube
+    namespace: devops
+    chart: sonarqube/sonarqube
+    version: 2025.5.0
+    values:
+      - values/sonarqube-values.yaml
+    needs:
+      - devops/nginx-ingress
+
+  # 10. Grafana - Metrik goruntuleme
+  - name: grafana
+    namespace: devops
+    chart: grafana/grafana
+    version: 10.1.2
+    values:
+      - values/grafana-values.yaml
+    needs:
+      - devops/prometheus
+
+  # 11. Harbor - Container image registry
+  - name: harbor
+    namespace: devops
+    chart: harbor/harbor
+    version: 1.17.2
+    values:
+      - values/harbor-values.yaml
+    needs:
+      - devops/nginx-ingress
+
+  # 12. GitLab Runner - CI/CD is calismasi
+  - name: gitlab-runner
+    namespace: devops
+    chart: gitlab/gitlab-runner
+    version: 0.71.0
+    values:
+      - values/gitlab-runner-values.yaml
+    needs:
+      - devops/gitlab

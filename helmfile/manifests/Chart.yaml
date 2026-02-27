@@ -1,0 +1,5 @@
+apiVersion: v2
+name: homelab-manifests
+description: Secrets ve ConfigMaps - Cloudflare API, GitLab credentials
+type: application
+version: 1.0.0

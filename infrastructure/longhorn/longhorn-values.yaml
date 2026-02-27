@@ -1,0 +1,20 @@
+defaultSettings:
+  # 2 node'da 2 replica (tam redundancy)
+  defaultReplicaCount: 2
+  # Pod'un calistigi node'da replica tercih et
+  defaultDataLocality: best-effort
+  # Otomatik salvage
+  autoSalvage: true
+  # Yedek replica olusturma suresi
+  replicaAutoBalance: best-effort
+  # Disk alaninin %25'i kaldiginda uyar
+  storageMinimalAvailablePercentage: 25
+  # Guaranteed engine manager CPU
+  guaranteedInstanceManagerCPU: 12
+
+persistence:
+  defaultClassReplicaCount: 2
+
+# Longhorn UI
+longhornUI:
+  replicas: 1

@@ -1,0 +1,54 @@
+adminUser: admin
+# DEGISTIR: Grafana admin sifreni belirle
+adminPassword: "GRAFANA_ADMIN_PASSWORD_BURAYA"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: prometheus-server
+        type: prometheus
+        url: http://prometheus-server.devops.svc.cluster.local
+        access: proxy
+        isDefault: true
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    folder: /tmp/dashboards
+    defaultFolderName: General
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hosts:
+    - grafana.home.railguncnr.com
+  tls:
+    - secretName: grafana-tls
+      hosts:
+        - grafana.home.railguncnr.com
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod

@@ -1,0 +1,109 @@
+global:
+  hosts:
+    domain: home.railguncnr.com
+    https: true
+
+  edition: ce
+
+  ingress:
+    enabled: true
+    class: nginx
+    configureCertmanager: false
+    tls:
+      enabled: true
+      secretName: gitlab-tls
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+
+  initialRootPassword:
+    secret: gitlab-initial-root-password
+    key: password
+
+prometheus:
+  install: false
+
+installCertmanager: false
+
+nginx-ingress:
+  enabled: false
+
+registry:
+  enabled: false
+
+gitlab-runner:
+  install: false
+
+gitlab:
+  webservice:
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 2
+        memory: 4Gi
+    minReplicas: 1
+    maxReplicas: 2
+  sidekiq:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 2Gi
+    minReplicas: 1
+    maxReplicas: 2
+  gitaly:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1
+        memory: 2Gi
+  gitlab-shell:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+    minReplicas: 1
+    maxReplicas: 2
+  toolbox:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 250m
+        memory: 512Mi
+
+postgresql:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+
+redis:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+minio:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
