@@ -17,6 +17,8 @@ repositories:
     url: https://charts.jetstack.io
   - name: external-dns
     url: https://kubernetes-sigs.github.io/external-dns/
+  - name: longhorn
+    url: https://charts.longhorn.io
 
 releases:
   # 1. Metrics Server - kubectl top ve HPA icin
@@ -38,7 +40,17 @@ releases:
     needs:
       - kube-system/metrics-server
 
-  # 3. cert-manager - Let's Encrypt TLS sertifikalari
+  # 3. Longhorn - Distributed storage
+  - name: longhorn
+    namespace: longhorn-system
+    chart: longhorn/longhorn
+    version: 1.8.1
+    values:
+      - values/longhorn-values.yaml
+    needs:
+      - devops/manifests
+
+  # 4. cert-manager - Let's Encrypt TLS sertifikalari
   - name: cert-manager
     namespace: cert-manager
     chart: jetstack/cert-manager
@@ -46,7 +58,7 @@ releases:
     values:
       - values/cert-manager-values.yaml
     needs:
-      - devops/manifests
+      - longhorn-system/longhorn
 
   # 4. external-dns - Cloudflare DNS otomatik yonetimi
   - name: external-dns

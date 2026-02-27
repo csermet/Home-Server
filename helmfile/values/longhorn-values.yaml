@@ -1,0 +1,26 @@
+defaultSettings:
+  defaultReplicaCount: 2
+  defaultDataPath: /var/lib/longhorn
+  storageMinimalAvailablePercentage: 15
+  defaultDataLocality: best-effort
+
+persistence:
+  defaultClass: true
+  defaultClassReplicaCount: 2
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  host: longhorn.home.railguncnr.com
+  tls: true
+  tlsSecret: longhorn-tls
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

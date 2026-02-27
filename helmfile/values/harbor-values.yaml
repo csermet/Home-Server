@@ -50,6 +50,9 @@ metrics:
   serviceMonitor:
     enabled: false
 
+nodeSelector:
+  kubernetes.io/arch: amd64
+
 ipFamily:
   ipv6:
     enabled: false

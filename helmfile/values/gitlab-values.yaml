@@ -5,6 +5,9 @@ global:
 
   edition: ce
 
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
   ingress:
     enabled: true
     class: nginx
