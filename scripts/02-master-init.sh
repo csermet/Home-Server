@@ -74,7 +74,7 @@ echo "[4/6] Calico CNI kuruluyor..."
 kubectl --kubeconfig="$KUBECONF" apply -f "$REPO_DIR/infrastructure/calico/calico.yaml"
 
 echo "Calico pod'larinin olusmasi bekleniyor..."
-until kubectl --kubeconfig="$KUBECONF" get pods -n kube-system -l k8s-app=calico-node --no-headers 2>/dev/null | grep -q "calico"; do
+until kubectl --kubeconfig="$KUBECONF" get pods -n kube-system -l k8s-app=calico-node --no-headers 2>/dev/null | grep -q .; do
   sleep 2
 done
 echo "Calico pod'lari olustu, hazir olmasi bekleniyor..."
@@ -92,7 +92,7 @@ echo "[5/6] MetalLB kuruluyor ($METALLB_VERSION)..."
 kubectl --kubeconfig="$KUBECONF" apply -f "https://raw.githubusercontent.com/metallb/metallb/$METALLB_VERSION/config/manifests/metallb-native.yaml"
 
 echo "MetalLB pod'larinin olusmasi bekleniyor..."
-until kubectl --kubeconfig="$KUBECONF" get pods -n metallb-system -l app=metallb --no-headers 2>/dev/null | grep -q "metallb"; do
+until kubectl --kubeconfig="$KUBECONF" get pods -n metallb-system -l app=metallb --no-headers 2>/dev/null | grep -q .; do
   sleep 2
 done
 echo "MetalLB pod'lari olustu, hazir olmasi bekleniyor..."
