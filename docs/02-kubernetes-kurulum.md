@@ -52,7 +52,7 @@ veya manuel:
 sudo kubeadm init \
   --control-plane-endpoint=cnr-intel \
   --apiserver-advertise-address=192.168.1.120 \
-  --pod-network-cidr=192.168.0.0/16 \
+  --pod-network-cidr=10.244.0.0/16 \
   --node-name=cnr-intel
 
 # kubeconfig ayarla
