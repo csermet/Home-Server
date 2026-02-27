@@ -5,6 +5,8 @@ global:
 
   edition: ce
 
+  # Sadece GitLab core component'larina uygulanir (webservice, sidekiq, gitaly vs.)
+  # Sub-chart'lar (postgresql, redis, minio) multi-arch oldugu icin etkilenmez
   nodeSelector:
     kubernetes.io/arch: amd64
 

@@ -1,6 +1,5 @@
 adminUser: admin
-# DEGISTIR: Grafana admin sifreni belirle
-adminPassword: "GRAFANA_ADMIN_PASSWORD_BURAYA"
+# adminPassword helmfile.yaml.gotmpl'den env var olarak gelir
 
 resources:
   requests:

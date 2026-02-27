@@ -16,9 +16,9 @@ expose:
 
 externalURL: https://harbor.home.railguncnr.com
 
-# DEGISTIR: Harbor admin sifreni belirle
-harborAdminPassword: "HARBOR_ADMIN_PASSWORD_BURAYA"
+# harborAdminPassword helmfile.yaml.gotmpl'den env var olarak gelir
 
+# database ve redis multi-arch - Raspberry'de de calisabilir
 database:
   type: internal
   internal:
@@ -30,8 +30,6 @@ database:
       limits:
         cpu: 500m
         memory: 512Mi
-    nodeSelector:
-      kubernetes.io/arch: amd64
 
 redis:
   type: internal
@@ -43,8 +41,6 @@ redis:
       limits:
         cpu: 200m
         memory: 256Mi
-    nodeSelector:
-      kubernetes.io/arch: amd64
 
 persistence:
   enabled: true
@@ -58,7 +54,10 @@ ipFamily:
   ipv6:
     enabled: false
 
+# Core component'lar sadece amd64 - Intel node'da calisir
 core:
+  nodeSelector:
+    kubernetes.io/arch: amd64
   resources:
     requests:
       cpu: 100m
@@ -66,10 +65,10 @@ core:
     limits:
       cpu: 500m
       memory: 512Mi
-  nodeSelector:
-    kubernetes.io/arch: amd64
 
 registry:
+  nodeSelector:
+    kubernetes.io/arch: amd64
   resources:
     requests:
       cpu: 100m
@@ -77,10 +76,10 @@ registry:
     limits:
       cpu: 500m
       memory: 512Mi
-  nodeSelector:
-    kubernetes.io/arch: amd64
 
 portal:
+  nodeSelector:
+    kubernetes.io/arch: amd64
   resources:
     requests:
       cpu: 50m
@@ -88,10 +87,10 @@ portal:
     limits:
       cpu: 200m
       memory: 256Mi
-  nodeSelector:
-    kubernetes.io/arch: amd64
 
 jobservice:
+  nodeSelector:
+    kubernetes.io/arch: amd64
   resources:
     requests:
       cpu: 100m
@@ -99,10 +98,10 @@ jobservice:
     limits:
       cpu: 500m
       memory: 512Mi
-  nodeSelector:
-    kubernetes.io/arch: amd64
 
 trivy:
+  nodeSelector:
+    kubernetes.io/arch: amd64
   resources:
     requests:
       cpu: 100m
@@ -110,8 +109,6 @@ trivy:
     limits:
       cpu: 500m
       memory: 1Gi
-  nodeSelector:
-    kubernetes.io/arch: amd64
 
 exporter:
   nodeSelector:

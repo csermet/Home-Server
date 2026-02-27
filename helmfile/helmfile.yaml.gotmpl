@@ -29,7 +29,7 @@ releases:
     values:
       - values/metrics-server-values.yaml
 
-  # 2. Manifests - Secrets (Cloudflare API, GitLab sifreleri)
+  # 2. Manifests - Secrets, ClusterIssuers, Namespaces
   - name: manifests
     namespace: devops
     chart: ./manifests
@@ -60,7 +60,7 @@ releases:
     needs:
       - longhorn-system/longhorn
 
-  # 4. external-dns - Cloudflare DNS otomatik yonetimi
+  # 5. external-dns - Cloudflare DNS otomatik yonetimi
   - name: external-dns
     namespace: devops
     chart: external-dns/external-dns
@@ -70,7 +70,7 @@ releases:
     needs:
       - cert-manager/cert-manager
 
-  # 5. NGINX Ingress Controller - LoadBalancer (MetalLB)
+  # 6. NGINX Ingress Controller - LoadBalancer (MetalLB)
   - name: nginx-ingress
     namespace: devops
     chart: ingress-nginx/ingress-nginx
@@ -79,16 +79,6 @@ releases:
       - values/nginx-values.yaml
     needs:
       - devops/external-dns
-
-  # 6. GitLab CE - Kaynak kod ve CI/CD
-  - name: gitlab
-    namespace: devops
-    chart: gitlab/gitlab
-    version: 9.4.3
-    values:
-      - values/gitlab-values.yaml
-    needs:
-      - devops/nginx-ingress
 
   # 7. Prometheus - Metrik toplama
   - name: prometheus
@@ -100,7 +90,18 @@ releases:
     needs:
       - devops/nginx-ingress
 
-  # 8. ArgoCD - GitOps deployment
+  # 8. Grafana - Metrik goruntuleme
+  - name: grafana
+    namespace: devops
+    chart: grafana/grafana
+    version: 10.1.2
+    values:
+      - values/grafana-values.yaml
+      - adminPassword: {{ requiredEnv "GRAFANA_ADMIN_PASSWORD" }}
+    needs:
+      - devops/prometheus
+
+  # 9. ArgoCD - GitOps deployment
   - name: argocd
     namespace: devops
     chart: argo/argo-cd
@@ -110,27 +111,17 @@ releases:
     needs:
       - devops/nginx-ingress
 
-  # 9. Grafana - Metrik goruntuleme
-  - name: grafana
+  # 10. GitLab CE - Kaynak kod ve CI/CD
+  - name: gitlab
     namespace: devops
-    chart: grafana/grafana
-    version: 10.1.2
+    chart: gitlab/gitlab
+    version: 9.4.3
     values:
-      - values/grafana-values.yaml
-    needs:
-      - devops/prometheus
-
-  # 11. Harbor - Container image registry
-  - name: harbor
-    namespace: devops
-    chart: harbor/harbor
-    version: 1.17.2
-    values:
-      - values/harbor-values.yaml
+      - values/gitlab-values.yaml
     needs:
       - devops/nginx-ingress
 
-  # 12. GitLab Runner - CI/CD is calismasi
+  # 11. GitLab Runner - CI/CD is calismasi
   - name: gitlab-runner
     namespace: devops
     chart: gitlab/gitlab-runner
@@ -139,3 +130,14 @@ releases:
       - values/gitlab-runner-values.yaml
     needs:
       - devops/gitlab
+
+  # 12. Harbor - Container image registry
+  - name: harbor
+    namespace: devops
+    chart: harbor/harbor
+    version: 1.17.2
+    values:
+      - values/harbor-values.yaml
+      - harborAdminPassword: {{ requiredEnv "HARBOR_ADMIN_PASSWORD" }}
+    needs:
+      - devops/nginx-ingress
