@@ -13,8 +13,6 @@ repositories:
     url: https://argoproj.github.io/argo-helm
   - name: metrics-server
     url: https://kubernetes-sigs.github.io/metrics-server/
-  - name: external-dns
-    url: https://kubernetes-sigs.github.io/external-dns/
   - name: longhorn
     url: https://charts.longhorn.io
 
@@ -49,17 +47,7 @@ releases:
     needs:
       - devops/manifests
 
-  # 4. external-dns - Cloudflare DNS otomatik yonetimi
-  - name: external-dns
-    namespace: devops
-    chart: external-dns/external-dns
-    version: 1.16.1
-    values:
-      - values/external-dns-values.yaml
-    needs:
-      - longhorn-system/longhorn
-
-  # 5. NGINX Ingress Controller - LoadBalancer (MetalLB)
+  # 4. NGINX Ingress Controller - LoadBalancer (MetalLB)
   - name: nginx-ingress
     namespace: devops
     chart: ingress-nginx/ingress-nginx
@@ -67,7 +55,7 @@ releases:
     values:
       - values/nginx-values.yaml
     needs:
-      - devops/external-dns
+      - longhorn-system/longhorn
 
   # 6. Prometheus - Metrik toplama
   - name: prometheus
