@@ -31,6 +31,7 @@ releases:
     chart: ./manifests
     values:
       - cloudflareApiToken: {{ requiredEnv "CLOUDFLARE_API_TOKEN" }}
+        cloudflareTunnelToken: {{ requiredEnv "CLOUDFLARE_TUNNEL_TOKEN" }}
         gitlabRootPassword: {{ requiredEnv "GITLAB_ROOT_PASSWORD" }}
         wildcardTlsCert: {{ requiredEnv "WILDCARD_TLS_CERT_B64" }}
         wildcardTlsKey: {{ requiredEnv "WILDCARD_TLS_KEY_B64" }}
