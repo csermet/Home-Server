@@ -87,28 +87,38 @@ spec:
 
 > **Not**: `wildcard-tls` secret'ı şu an sadece `devops` ve `longhorn-system` namespace'lerinde var. Farklı namespace kullanılacaksa secret o namespace'e de kopyalanmalı (veya helmfile manifests chart'ına eklenmeli).
 
-### 4. Veritabanı
+### 4. Veritabanı (PostgreSQL — Hazır)
 
-Seçenekler:
-- **PostgreSQL** — Helm chart ile ayrı deploy veya uygulama içi SQLite
-- **SQLite** — PVC ile persistent, en basit seçenek, tek pod uygulaması için yeterli
-- Cluster'da zaten Harbor'ın internal PostgreSQL'i var ama paylaşılmamalı
+Cluster'da paylaşımlı bir PostgreSQL instance'ı zaten çalışıyor (Bitnami Helm chart, `devops` namespace).
 
-PVC örneği (SQLite veya dosya tabanlı DB için):
-```yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: gider-app-data
-  namespace: devops
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: longhorn
-  resources:
-    requests:
-      storage: 1Gi
+**Bağlantı Bilgileri:**
+
+| Parametre | Değer |
+|-----------|-------|
+| Host | `postgresql.devops.svc.cluster.local` |
+| Port | `5432` |
+| Database | `home-expense` |
+| Username | `postgre` |
+| Password | ortam değişkeninden alınacak (aşağıya bak) |
+
+**Connection string:**
 ```
+postgresql://postgre:<PASSWORD>@postgresql.devops.svc.cluster.local:5432/home-expense
+```
+
+Uygulamada password'ü environment variable olarak ver, koda gömme. Deployment'ta:
+```yaml
+env:
+  - name: DATABASE_URL
+    value: "postgresql://postgre:$(POSTGRES_APP_PASSWORD)@postgresql.devops.svc.cluster.local:5432/home-expense"
+  - name: POSTGRES_APP_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: postgresql
+        key: password
+```
+
+> **Not**: `postgresql` secret'ı Bitnami chart tarafından `devops` namespace'inde otomatik oluşturuldu. `password` key'i uygulama kullanıcısının şifresini içerir.
 
 ### 5. Deployment Örneği (Tam)
 
@@ -133,13 +143,14 @@ spec:
           image: harbor.railguncnr.com/library/gider-app:latest
           ports:
             - containerPort: 3000  # uygulama portu
-          volumeMounts:
-            - name: data
-              mountPath: /app/data
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: gider-app-data
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://postgre:$(POSTGRES_APP_PASSWORD)@postgresql.devops.svc.cluster.local:5432/home-expense"
+            - name: POSTGRES_APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql
+                  key: password
 ---
 apiVersion: v1
 kind: Service
