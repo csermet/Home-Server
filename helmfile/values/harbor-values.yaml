@@ -19,9 +19,14 @@ database:
   type: internal
   internal:
     password: "changeit"
+    nodeSelector:
+      kubernetes.io/arch: amd64
 
 redis:
   type: internal
+  internal:
+    nodeSelector:
+      kubernetes.io/arch: amd64
 
 persistence:
   enabled: true
