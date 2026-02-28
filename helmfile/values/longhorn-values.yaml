@@ -9,8 +9,4 @@ persistence:
   defaultClassReplicaCount: 2
 
 ingress:
-  enabled: true
-  ingressClassName: nginx
-  host: longhorn.railguncnr.com
-  tls: true
-  tlsSecret: wildcard-tls
+  enabled: false

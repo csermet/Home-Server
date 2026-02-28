@@ -1,13 +1,6 @@
 server:
   ingress:
-    enabled: true
-    ingressClassName: nginx
-    hosts:
-      - prometheus.railguncnr.com
-    tls:
-      - secretName: wildcard-tls
-        hosts:
-          - prometheus.railguncnr.com
+    enabled: false
 
 alertmanager:
   enabled: false
