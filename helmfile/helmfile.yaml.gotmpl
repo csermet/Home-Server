@@ -15,6 +15,8 @@ repositories:
     url: https://kubernetes-sigs.github.io/metrics-server/
   - name: longhorn
     url: https://charts.longhorn.io
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
 
 releases:
   # 1. Metrics Server
@@ -48,7 +50,20 @@ releases:
     needs:
       - devops/manifests
 
-  # 4. NGINX Ingress Controller - LoadBalancer (MetalLB)
+  # 4. PostgreSQL - Shared database for applications
+  - name: postgresql
+    namespace: devops
+    chart: bitnami/postgresql
+    version: 16.4.1
+    values:
+      - values/postgresql-values.yaml
+      - auth:
+          postgresPassword: {{ requiredEnv "POSTGRES_ADMIN_PASSWORD" }}
+          password: {{ requiredEnv "POSTGRES_APP_PASSWORD" }}
+    needs:
+      - longhorn-system/longhorn
+
+  # 5. NGINX Ingress Controller - LoadBalancer (MetalLB)
   - name: nginx-ingress
     namespace: devops
     chart: ingress-nginx/ingress-nginx
