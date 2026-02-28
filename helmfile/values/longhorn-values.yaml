@@ -11,16 +11,6 @@ persistence:
 ingress:
   enabled: true
   ingressClassName: nginx
-  host: longhorn.home.railguncnr.com
+  host: longhorn.railguncnr.com
   tls: true
-  tlsSecret: longhorn-tls
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-
-resources:
-  limits:
-    cpu: 250m
-    memory: 256Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
+  tlsSecret: wildcard-tls

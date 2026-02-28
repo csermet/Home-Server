@@ -8,24 +8,11 @@ env:
         name: cloudflare-api-token
         key: cloudflare_api_token
 
-# Sadece bu domain'i yonet
 domainFilters:
-  - home.railguncnr.com
+  - railguncnr.com
 
-# TXT record'lar ile sahiplik dogrulama
 txtOwnerId: homelab
 txtPrefix: "_externaldns."
 
-# Kayitlari sil ve olustur
 policy: sync
-
-# Log seviyesi
 logLevel: info
-
-resources:
-  requests:
-    cpu: 50m
-    memory: 64Mi
-  limits:
-    cpu: 200m
-    memory: 128Mi

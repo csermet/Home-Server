@@ -1,1 +1,2 @@
-# Minimal config - defaults yeterli
+args:
+  - --kubelet-insecure-tls

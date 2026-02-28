@@ -4,43 +4,24 @@ expose:
     enabled: true
     certSource: secret
     secret:
-      secretName: harbor-tls
+      secretName: wildcard-tls
   ingress:
     hosts:
-      core: harbor.home.railguncnr.com
+      core: harbor.railguncnr.com
     className: nginx
     annotations:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: "0"
-      cert-manager.io/cluster-issuer: letsencrypt-prod
 
-externalURL: https://harbor.home.railguncnr.com
+externalURL: https://harbor.railguncnr.com
 
-# harborAdminPassword helmfile.yaml.gotmpl'den env var olarak gelir
-
-# database ve redis multi-arch - Raspberry'de de calisabilir
 database:
   type: internal
   internal:
     password: "changeit"
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
 
 redis:
   type: internal
-  internal:
-    resources:
-      requests:
-        cpu: 50m
-        memory: 64Mi
-      limits:
-        cpu: 200m
-        memory: 256Mi
 
 persistence:
   enabled: true
@@ -54,61 +35,25 @@ ipFamily:
   ipv6:
     enabled: false
 
-# Core component'lar sadece amd64 - Intel node'da calisir
 core:
   nodeSelector:
     kubernetes.io/arch: amd64
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
 
 registry:
   nodeSelector:
     kubernetes.io/arch: amd64
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
 
 portal:
   nodeSelector:
     kubernetes.io/arch: amd64
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
 
 jobservice:
   nodeSelector:
     kubernetes.io/arch: amd64
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
 
 trivy:
   nodeSelector:
     kubernetes.io/arch: amd64
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
 
 exporter:
   nodeSelector:

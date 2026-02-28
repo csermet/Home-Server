@@ -1,13 +1,4 @@
 adminUser: admin
-# adminPassword helmfile.yaml.gotmpl'den env var olarak gelir
-
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 500m
-    memory: 512Mi
 
 datasources:
   datasources.yaml:
@@ -44,10 +35,8 @@ ingress:
   enabled: true
   ingressClassName: nginx
   hosts:
-    - grafana.home.railguncnr.com
+    - grafana.railguncnr.com
   tls:
-    - secretName: grafana-tls
+    - secretName: wildcard-tls
       hosts:
-        - grafana.home.railguncnr.com
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+        - grafana.railguncnr.com

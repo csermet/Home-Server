@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wildcard-tls
+  namespace: devops
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ .Values.wildcardTlsCert }}
+  tls.key: {{ .Values.wildcardTlsKey }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wildcard-tls
+  namespace: longhorn-system
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ .Values.wildcardTlsCert }}
+  tls.key: {{ .Values.wildcardTlsKey }}

@@ -13,15 +13,13 @@ repositories:
     url: https://argoproj.github.io/argo-helm
   - name: metrics-server
     url: https://kubernetes-sigs.github.io/metrics-server/
-  - name: jetstack
-    url: https://charts.jetstack.io
   - name: external-dns
     url: https://kubernetes-sigs.github.io/external-dns/
   - name: longhorn
     url: https://charts.longhorn.io
 
 releases:
-  # 1. Metrics Server - kubectl top ve HPA icin
+  # 1. Metrics Server
   - name: metrics-server
     namespace: kube-system
     chart: metrics-server/metrics-server
@@ -29,14 +27,15 @@ releases:
     values:
       - values/metrics-server-values.yaml
 
-  # 2. Manifests - Secrets, ClusterIssuers, Namespaces
+  # 2. Manifests - Secrets, Namespaces, Wildcard TLS
   - name: manifests
     namespace: devops
     chart: ./manifests
     values:
       - cloudflareApiToken: {{ requiredEnv "CLOUDFLARE_API_TOKEN" }}
         gitlabRootPassword: {{ requiredEnv "GITLAB_ROOT_PASSWORD" }}
-        letsencryptEmail: {{ requiredEnv "LETSENCRYPT_EMAIL" }}
+        wildcardTlsCert: {{ requiredEnv "WILDCARD_TLS_CERT_B64" }}
+        wildcardTlsKey: {{ requiredEnv "WILDCARD_TLS_KEY_B64" }}
     needs:
       - kube-system/metrics-server
 
@@ -50,17 +49,7 @@ releases:
     needs:
       - devops/manifests
 
-  # 4. cert-manager - Let's Encrypt TLS sertifikalari
-  - name: cert-manager
-    namespace: cert-manager
-    chart: jetstack/cert-manager
-    version: v1.17.1
-    values:
-      - values/cert-manager-values.yaml
-    needs:
-      - longhorn-system/longhorn
-
-  # 5. external-dns - Cloudflare DNS otomatik yonetimi
+  # 4. external-dns - Cloudflare DNS otomatik yonetimi
   - name: external-dns
     namespace: devops
     chart: external-dns/external-dns
@@ -68,9 +57,9 @@ releases:
     values:
       - values/external-dns-values.yaml
     needs:
-      - cert-manager/cert-manager
+      - longhorn-system/longhorn
 
-  # 6. NGINX Ingress Controller - LoadBalancer (MetalLB)
+  # 5. NGINX Ingress Controller - LoadBalancer (MetalLB)
   - name: nginx-ingress
     namespace: devops
     chart: ingress-nginx/ingress-nginx
@@ -80,7 +69,7 @@ releases:
     needs:
       - devops/external-dns
 
-  # 7. Prometheus - Metrik toplama
+  # 6. Prometheus - Metrik toplama
   - name: prometheus
     namespace: devops
     chart: prometheus-community/prometheus
@@ -90,7 +79,7 @@ releases:
     needs:
       - devops/nginx-ingress
 
-  # 8. Grafana - Metrik goruntuleme
+  # 7. Grafana - Metrik goruntuleme
   - name: grafana
     namespace: devops
     chart: grafana/grafana
@@ -101,7 +90,7 @@ releases:
     needs:
       - devops/prometheus
 
-  # 9. ArgoCD - GitOps deployment
+  # 8. ArgoCD - GitOps deployment
   - name: argocd
     namespace: devops
     chart: argo/argo-cd
@@ -111,7 +100,7 @@ releases:
     needs:
       - devops/nginx-ingress
 
-  # 10. GitLab CE - Kaynak kod ve CI/CD
+  # 9. GitLab CE - Kaynak kod ve CI/CD
   - name: gitlab
     namespace: devops
     chart: gitlab/gitlab
@@ -121,7 +110,7 @@ releases:
     needs:
       - devops/nginx-ingress
 
-  # 11. GitLab Runner - CI/CD is calismasi
+  # 10. GitLab Runner - CI/CD is calismasi
   - name: gitlab-runner
     namespace: devops
     chart: gitlab/gitlab-runner
@@ -131,7 +120,7 @@ releases:
     needs:
       - devops/gitlab
 
-  # 12. Harbor - Container image registry
+  # 11. Harbor - Container image registry
   - name: harbor
     namespace: devops
     chart: harbor/harbor

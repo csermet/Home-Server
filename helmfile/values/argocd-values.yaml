@@ -1,10 +1,7 @@
 global:
-  domain: argocd.home.railguncnr.com
+  domain: argocd.railguncnr.com
 
 configs:
-  secret:
-    # DEGISTIR: bcrypt hash olustur -> htpasswd -nbBC 10 "" <sifre> | tr -d ':\n' | sed 's/$2y/$2a/'
-    argocdServerAdminPassword: "$2a$10$tVYLdmfH8Ktyf1e3eYwvN.GpcWarcspehfcGveDkBLbY2T0CQk2ne"
   params:
     server.insecure: true
 
@@ -12,68 +9,15 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: argocd.home.railguncnr.com
+    hostname: argocd.railguncnr.com
     tls: true
     extraTls:
-      - secretName: argocd-tls
+      - secretName: wildcard-tls
         hosts:
-          - argocd.home.railguncnr.com
+          - argocd.railguncnr.com
     annotations:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-      cert-manager.io/cluster-issuer: letsencrypt-prod
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
-      memory: 256Mi
 
 dex:
   enabled: false
-
-controller:
-  resources:
-    requests:
-      cpu: 100m
-      memory: 256Mi
-    limits:
-      cpu: 500m
-      memory: 512Mi
-
-repoServer:
-  resources:
-    requests:
-      cpu: 50m
-      memory: 128Mi
-    limits:
-      cpu: 250m
-      memory: 256Mi
-
-applicationSet:
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi
-
-notifications:
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 100m
-      memory: 128Mi
-
-redis:
-  resources:
-    requests:
-      cpu: 50m
-      memory: 64Mi
-    limits:
-      cpu: 200m
-      memory: 256Mi

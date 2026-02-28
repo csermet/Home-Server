@@ -1,12 +1,10 @@
-gitlabUrl: https://gitlab.home.railguncnr.com
+gitlabUrl: https://gitlab.railguncnr.com
 
 runnerToken: ""
 
 runners:
   secret: gitlab-runner-secret
-
   tags: "kubernetes,k8s,docker"
-
   config: |
     [[runners]]
       name = "homelab-k8s-runner"
@@ -16,23 +14,11 @@ runners:
         namespace = "{{.Release.Namespace}}"
         image = "ubuntu:22.04"
         privileged = false
-
-        cpu_request = "500m"
-        cpu_limit = "1000m"
-        memory_request = "512Mi"
-        memory_limit = "1Gi"
-        helper_cpu_request = "100m"
-        helper_cpu_limit = "200m"
-        helper_memory_request = "128Mi"
-        helper_memory_limit = "256Mi"
-
       [runners.cache]
         Type = "local"
 
 concurrent: 10
-
 replicas: 1
-
 checkInterval: 3
 
 rbac:
@@ -48,51 +34,3 @@ rbac:
 serviceAccount:
   create: true
   name: gitlab-runner
-
-resources:
-  limits:
-    cpu: 1000m
-    memory: 512Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
-
-metrics:
-  enabled: true
-  portName: metrics
-  port: 9252
-  serviceMonitor:
-    enabled: false
-
-envVars:
-  - name: RUNNER_EXECUTOR
-    value: kubernetes
-  - name: KUBERNETES_NAMESPACE
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.namespace
-
-podLabels:
-  app: gitlab-runner
-  component: ci-cd
-
-securityContext:
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: false
-  runAsNonRoot: true
-  runAsUser: 999
-  fsGroup: 65534
-  capabilities:
-    drop:
-      - ALL
-
-volumes:
-  - name: runner-home
-    emptyDir: {}
-
-volumeMounts:
-  - name: runner-home
-    mountPath: /.gitlab-runner
-
-sessionServer:
-  enabled: false
